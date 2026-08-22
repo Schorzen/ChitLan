@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#2E1065">
+<title>ChitLan — Home</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="is-loading">
+<div class="app-shell">
+
+  <div class="hero-block">
+    <div class="flex-between" style="margin-bottom: var(--space-5);">
+      <div class="wordmark wordmark-on-dark" style="font-size:22px;">Chit<span>Lan</span></div>
+      <div class="flex-row">
+        <div class="live-pill on-dark" id="online-pill"><span class="live-dot"></span><span id="online-count" class="mono">--</span></div>
+        <button class="btn-icon" id="bell-btn" aria-label="Notifications" style="background:rgba(255,255,255,0.14); border-color:rgba(255,255,255,0.2); color:var(--white);"></button>
+      </div>
+    </div>
+    <span class="eyebrow" style="color:rgba(255,255,255,0.65);">Welcome back</span>
+    <h1 style="color:var(--white); margin-bottom: var(--space-2);" id="greeting-name">ChitLaner</h1>
+  </div>
+
+  <div class="sheet-overlap flex-between">
+    <div>
+      <span class="eyebrow">Your streak</span>
+      <h2 class="mb-0" id="streak-readout">0 days</h2>
+    </div>
+    <div class="streak-chip" id="streak-chip"></div>
+  </div>
+
+  <main class="page-content">
+
+    <div class="icon-grid">
+      <a class="icon-tile" href="chat.html"><span class="icon-tile-circle" id="tile-chat"></span><span>Public Chat</span></a>
+      <a class="icon-tile" href="random.html"><span class="icon-tile-circle" id="tile-random"></span><span>RandomChat</span></a>
+      <a class="icon-tile" href="profile.html"><span class="icon-tile-circle" id="tile-profile"></span><span>Profile</span></a>
+      <a class="icon-tile" href="#daily-question-section"><span class="icon-tile-circle" id="tile-question"></span><span>Daily Q</span></a>
+      <a class="icon-tile" href="#trending-section"><span class="icon-tile-circle" id="tile-trending"></span><span>Trending</span></a>
+      <a class="icon-tile" href="#badges-section"><span class="icon-tile-circle" id="tile-badges"></span><span>Badges</span></a>
+    </div>
+
+    <div id="daily-question-section">
+      <div class="question-card">
+        <span class="eyebrow">Daily Question</span>
+        <h2 id="daily-question-text">Loading…</h2>
+        <p style="margin-bottom:0;">Bring it to the Public Chat and see who answers.</p>
+      </div>
+    </div>
+
+    <div class="card" id="trending-section">
+      <h3>Trending on the island</h3>
+      <div id="trending-list">
+        <p class="text-muted mb-0">Nothing trending yet — be the first to start something in Public Chat.</p>
+      </div>
+    </div>
+
+    <div class="card" id="badges-section">
+      <h3>Your badges</h3>
+      <div id="badges-list" class="mt-2"></div>
+    </div>
+
+  </main>
+
+  <div id="tab-bar-mount"></div>
+</div>
+
+<script type="module" src="page-home.js"></script>
+</body>
+</html>

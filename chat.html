@@ -7,14 +7,14 @@
 <title>ChitLan — Public Chat</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="is-loading">
 <div class="app-shell">
   <header class="page-header">
     <h1 style="font-size:20px;" class="mb-0">Public Chat</h1>
     <div class="live-pill" id="online-pill"><span class="live-dot"></span><span id="online-count" class="mono">--</span></div>
   </header>
 
-  <main class="page-content" style="padding-bottom:150px;">
+  <main class="page-content" style="padding-bottom:calc(var(--nav-height) + 78px);">
     <div class="chat-scroll" id="chat-scroll">
       <div class="empty-state"><div class="spinner" style="margin:0 auto;"></div></div>
     </div>
