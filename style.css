@@ -1,0 +1,542 @@
+/* =========================================================
+   ChitLan — Design System v2
+   Restyled after Maya (PH fintech app): bold purple/white
+   color-block header, black-on-white content, brand color
+   used judiciously, monochrome icon grid, floating overlaid
+   bottom shortcut bar with a raised center action.
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Brand */
+  --purple: #6D28D9;
+  --purple-strong: #5B21B6;
+  --purple-dark: #2E1065;
+  --purple-mid: #8B5CF6;
+  --purple-light: #F1EAFE;
+
+  /* Neutrals */
+  --white: #FFFFFF;
+  --foam: #FBFAFE;
+  --ink: #17131F;
+  --ink-soft: #6B6678;
+  --net: #9C96AC;
+  --net-light: #E7E3F0;
+
+  /* Functional — deliberately kept separate from the brand color */
+  --success: #1FAE5C;
+  --danger: #E14848;
+
+  /* Type */
+  --font-display: 'Sora', 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* Scale */
+  --radius-sm: 10px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-pill: 999px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --shadow-sm: 0 2px 10px rgba(23, 19, 31, 0.05);
+  --shadow-md: 0 8px 24px rgba(23, 19, 31, 0.08);
+  --shadow-lg: 0 16px 40px rgba(46, 16, 101, 0.18);
+  --nav-height: 96px;
+  --header-height: 74px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--foam);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* ---------- Full-page loading overlay ----------
+   Toggled via `is-loading` on <body> (present by default in the HTML so it
+   shows instantly on load/refresh, before any JS has run). Pages call
+   hidePageLoader() from utils.js once their initial content is ready. */
+body.is-loading { overflow: hidden; }
+body.is-loading::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: var(--foam);
+  z-index: 300;
+}
+body.is-loading::after {
+  content: '';
+  position: fixed;
+  top: 50%; left: 50%;
+  width: 28px; height: 28px;
+  margin: -14px 0 0 -14px;
+  border: 3px solid var(--purple-light);
+  border-top-color: var(--purple);
+  border-radius: 50%;
+  z-index: 301;
+  animation: spin .7s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  body.is-loading::after { animation-duration: 1.4s; }
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 var(--space-2);
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 27px; line-height: 1.15; }
+h2 { font-size: 20px; line-height: 1.2; }
+h3 { font-size: 16px; line-height: 1.3; }
+
+p { margin: 0 0 var(--space-3); line-height: 1.5; color: var(--ink-soft); }
+
+a { color: var(--purple); text-decoration: none; }
+
+.mono { font-family: var(--font-mono); }
+
+button { font-family: inherit; cursor: pointer; }
+
+img { max-width: 100%; display: block; }
+
+/* Layout shells */
+.app-shell {
+  max-width: 520px;
+  margin: 0 auto;
+  min-height: 100vh;
+  position: relative;
+  background: var(--foam);
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-4) var(--space-3);
+}
+
+/* Stays pinned to the top while the page scrolls underneath it — used on
+   Chat so the title/online-count stay visible the whole time, the way a
+   messaging app's header normally behaves. */
+.page-header-sticky {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  height: var(--header-height);
+  background: var(--foam);
+  border-bottom: 1px solid var(--net-light);
+  z-index: 50;
+}
+
+.page-content {
+  padding: 0 var(--space-4) calc(var(--nav-height) + env(safe-area-inset-bottom, 0px));
+}
+
+.center-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  text-align: center;
+}
+
+/* Wordmark */
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 30px;
+  color: var(--purple-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.wordmark .dot { color: var(--purple); }
+.wordmark-on-dark { color: var(--white); }
+.wordmark-on-dark .dot { color: var(--purple-mid); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-body);
+  transition: transform .12s ease, box-shadow .12s ease, opacity .12s ease;
+  width: 100%;
+}
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--purple); color: var(--white); box-shadow: var(--shadow-md); }
+.btn-primary:hover { background: var(--purple-strong); }
+.btn-secondary { background: var(--purple-light); color: var(--purple-dark); }
+.btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--net-light); }
+.btn-ghost { background: transparent; color: var(--ink-soft); box-shadow: none; }
+.btn-danger { background: var(--danger); color: var(--white); }
+.btn-sm { padding: 8px 16px; font-size: 13px; width: auto; }
+.btn[disabled] { opacity: .5; pointer-events: none; }
+.btn-icon {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--white); box-shadow: var(--shadow-sm);
+  border: 1px solid var(--net-light);
+  display: inline-flex; align-items: center; justify-content: center; padding: 0;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--white);
+  border: 1px solid var(--net-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-4);
+}
+.card-tight { padding: var(--space-4); }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--net);
+  margin-bottom: var(--space-2);
+  display: block;
+}
+
+/* Daily Question card — the one place brand color is used boldly on Home,
+   echoing how Maya reserves its accent for a single standout moment. */
+.question-card {
+  background: linear-gradient(155deg, var(--purple) 0%, var(--purple-dark) 100%);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  position: relative;
+  overflow: hidden;
+}
+.question-card .eyebrow { color: rgba(255,255,255,0.7); }
+.question-card h2 { color: var(--white); font-size: 19px; }
+.question-card p { color: rgba(255,255,255,0.85); }
+
+/* Trending list */
+.trend-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--net-light);
+}
+.trend-row:last-child { border-bottom: none; }
+.trend-rank { font-family: var(--font-mono); color: var(--net); font-size: 13px; width: 20px; }
+.trend-title { flex: 1; font-weight: 600; font-size: 14px; }
+.trend-count { font-family: var(--font-mono); font-size: 12px; color: var(--purple); }
+
+/* ---------- Online / live indicator (kept green — a status signal, not brand decoration) ---------- */
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--white);
+  border: 1px solid var(--net-light);
+  border-radius: var(--radius-pill);
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.live-pill.on-dark { background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.2); color: var(--white); }
+.live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--success); position: relative; flex-shrink: 0; }
+.live-dot::after {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  background: var(--success); opacity: 0.35; animation: pulse-ring 1.8s ease-out infinite;
+}
+@keyframes pulse-ring { 0% { transform: scale(0.6); opacity: 0.5; } 100% { transform: scale(1.8); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .live-dot::after { animation: none; } }
+
+/* ---------- Streak & badges ---------- */
+.streak-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--purple-dark);
+  color: var(--white);
+  border-radius: var(--radius-pill);
+  padding: 7px 14px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+}
+.badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--purple-light);
+  color: var(--purple-dark);
+  border-radius: var(--radius-pill);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0 var(--space-2) var(--space-2) 0;
+}
+
+/* ---------- Icon ring (empty states, step indicators) ---------- */
+.step-icon-ring {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: var(--purple-light); color: var(--purple-dark);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto var(--space-4);
+}
+
+/* ---------- Purple hero block + overlapping white sheet ----------
+   Signature Maya-style pattern: solid color-block header, then a
+   white panel that overlaps its bottom edge. */
+.hero-block {
+  background: linear-gradient(160deg, var(--purple) 0%, var(--purple-dark) 100%);
+  color: var(--white);
+  padding: var(--space-6) var(--space-4) var(--space-7);
+  border-radius: 0 0 32px 32px;
+  position: relative;
+}
+.hero-block p { color: rgba(255,255,255,0.78); }
+.sheet-overlap {
+  background: var(--white);
+  border: 1px solid var(--net-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  margin: calc(-1 * var(--space-6)) var(--space-4) var(--space-4);
+  padding: var(--space-5);
+  position: relative;
+  z-index: 2;
+}
+
+/* ---------- Icon grid — monochrome quick-action tiles ---------- */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4) var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.icon-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  text-align: center;
+}
+.icon-tile-circle {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  background: var(--purple-light);
+  color: var(--purple-dark);
+  display: flex; align-items: center; justify-content: center;
+}
+.icon-tile span { font-size: 11.5px; font-weight: 700; color: var(--ink); }
+
+/* ---------- Bottom nav — floating overlaid shortcut bar ---------- */
+.tab-bar {
+  position: fixed;
+  left: 16px; right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  max-width: 488px;
+  margin: 0 auto;
+  height: 64px;
+  background: var(--purple-dark);
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 6px;
+  box-shadow: var(--shadow-lg);
+  z-index: 40;
+}
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 6px 0;
+}
+.tab-item.active { color: var(--white); }
+.tab-item svg { width: 20px; height: 20px; }
+.tab-item.tab-fab { position: relative; color: var(--white); }
+.tab-item.tab-fab .fab-circle {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  background: var(--purple);
+  display: flex; align-items: center; justify-content: center;
+  margin-top: -26px;
+  border: 3px solid var(--foam);
+  box-shadow: 0 8px 18px rgba(109,40,217,0.55);
+}
+.tab-item.tab-fab svg { width: 21px; height: 21px; }
+
+/* ---------- Forms ---------- */
+.field { margin-bottom: var(--space-4); }
+.field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: var(--space-2); color: var(--ink); }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid var(--net-light);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 15px;
+  background: var(--white);
+  color: var(--ink);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: 2px solid var(--purple);
+  outline-offset: 1px;
+  border-color: var(--purple);
+}
+
+/* ---------- Chat ---------- */
+.chat-scroll { display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-4) 0; }
+.msg-row { display: flex; gap: var(--space-2); align-items: flex-end; max-width: 84%; }
+.msg-row.mine { align-self: flex-end; flex-direction: row-reverse; }
+.msg-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; background: var(--purple-light); object-fit: cover; }
+.msg-bubble {
+  background: var(--white);
+  border: 1px solid var(--net-light);
+  border-radius: var(--radius-md);
+  border-bottom-left-radius: 4px;
+  padding: 10px 14px;
+  font-size: 14.5px;
+  animation: msg-in .18s ease-out;
+}
+.msg-row.mine .msg-bubble {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: var(--white);
+  border-bottom-left-radius: var(--radius-md);
+  border-bottom-right-radius: 4px;
+}
+.msg-name { font-size: 11.5px; font-weight: 700; color: var(--purple); margin-bottom: 2px; }
+.msg-row.mine .msg-name { display: none; }
+.msg-time { font-family: var(--font-mono); font-size: 10px; opacity: 0.6; margin-top: 2px; }
+
+/* ---------- Message reactions ---------- */
+.msg-reactions { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.reaction-pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: var(--white); border: 1px solid var(--net-light); border-radius: var(--radius-pill);
+  padding: 2px 8px; font-size: 12.5px; line-height: 1.6;
+}
+.reaction-pill.mine-reaction { background: var(--purple-light); border-color: var(--purple); }
+
+/* Quick-reaction row at the top of the message action sheet */
+.reaction-row {
+  display: flex; justify-content: space-between;
+  padding: var(--space-2) 0 var(--space-4);
+  border-bottom: 1px solid var(--foam);
+  margin-bottom: var(--space-2);
+}
+.reaction-option { background: none; border: none; font-size: 26px; line-height: 1; padding: 4px; border-radius: 50%; }
+.reaction-option.selected { background: var(--purple-light); }
+
+/* Emoji picker for composing */
+.emoji-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  max-height: 260px; overflow-y: auto; margin-bottom: var(--space-3);
+}
+.emoji-grid-btn { background: none; border: none; font-size: 24px; padding: 8px 0; border-radius: var(--radius-sm); line-height: 1; }
+.emoji-grid-btn:active { background: var(--purple-light); }
+@keyframes msg-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.chat-input-bar {
+  position: fixed;
+  bottom: var(--nav-height);
+  left: 0; right: 0;
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--foam);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+}
+.chat-input-bar input {
+  flex: 1;
+  border: 1.5px solid var(--net-light);
+  border-radius: var(--radius-pill);
+  padding: 12px 18px;
+  font-size: 15px;
+  font-family: var(--font-body);
+  background: var(--white);
+}
+.send-btn {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--purple); color: var(--white); border: none;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Message action menu */
+.msg-menu-backdrop { position: fixed; inset: 0; background: rgba(23,19,31,0.45); display: flex; align-items: flex-end; z-index: 60; }
+.msg-menu { background: var(--white); width: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: var(--space-5); max-width: 520px; margin: 0 auto; }
+.msg-menu button { width: 100%; text-align: left; background: none; border: none; padding: 14px 4px; font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: var(--space-3); color: var(--ink); border-bottom: 1px solid var(--foam); }
+.msg-menu button.danger-action { color: var(--danger); }
+
+/* ---------- Empty / loading states ---------- */
+.empty-state { text-align: center; padding: var(--space-7) var(--space-4); color: var(--net); }
+.empty-state svg { width: 48px; height: 48px; margin-bottom: var(--space-3); opacity: 0.5; }
+.spinner { width: 22px; height: 22px; border: 3px solid var(--purple-light); border-top-color: var(--purple); border-radius: 50%; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 1.4s; } .msg-bubble { animation: none; } }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: calc(var(--nav-height) + 16px); left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--white); padding: 12px 20px; border-radius: var(--radius-pill);
+  font-size: 13.5px; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 100; max-width: 90%; text-align: center;
+}
+
+/* Utility */
+.flex-row { display: flex; align-items: center; gap: var(--space-2); }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.text-center { text-align: center; }
+.text-muted { color: var(--net); font-size: 13px; }
+.mt-2 { margin-top: var(--space-2); }
+.mt-4 { margin-top: var(--space-4); }
+.mb-0 { margin-bottom: 0; }
+.hidden { display: none !important; }
+.avatar-lg { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; background: var(--purple-light); }
+.avatar-md { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; background: var(--purple-light); }
+
+:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
