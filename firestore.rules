@@ -32,7 +32,9 @@ service cloud.firestore {
     // ---- Users ----
     match /users/{userId} {
       allow read: if isSignedIn();
-      allow create: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && request.resource.data.isAdmin == false
+        && request.resource.data.isBlocked == false;
       allow update: if isAdmin() || (
         isOwner(userId) &&
         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['isAdmin', 'isBlocked'])
@@ -52,8 +54,14 @@ service cloud.firestore {
         && request.resource.data.senderId == request.auth.uid
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
-        && request.resource.data.text.size() <= 500;
-      allow update: if false;
+        && request.resource.data.text.size() <= 500
+        && (!('replyTo' in request.resource.data) || request.resource.data.replyTo.text.size() <= 200);
+      allow update: if isSignedIn()
+        // Only the `reactions` field may change at all — text/sender/etc. stay locked.
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reactions'])
+        // Within reactions, only YOUR OWN key may change — you can react to
+        // anyone's message, but never touch someone else's reaction entry.
+        && request.resource.data.reactions.diff(resource.data.get('reactions', {})).affectedKeys().hasOnly([request.auth.uid]);
       allow delete: if isSignedIn(); // see note above re: message-cap pruning
     }
 
@@ -76,8 +84,8 @@ service cloud.firestore {
 
       match /messages/{msgId} {
         function inRoom() {
-          return get(/databases/$(database)/documents/randomRooms/$(roomId)).data.userA == request.auth.uid
-              || get(/databases/$(database)/documents/randomRooms/$(roomId)).data.userB == request.auth.uid;
+          let room = get(/databases/$(database)/documents/randomRooms/$(roomId)).data;
+          return room.userA == request.auth.uid || room.userB == request.auth.uid;
         }
         allow read, delete: if isSignedIn() && inRoom();
         allow create: if isSignedIn() && inRoom() && request.resource.data.senderId == request.auth.uid;
