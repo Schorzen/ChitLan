@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6D28D9">
+<title>ChitLan — Public Chat</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="is-loading chat-page">
+<div class="chat-page-shell">
+  <header class="page-header">
+    <h1 style="font-size:20px;" class="mb-0">Public Chat</h1>
+    <div class="live-pill" id="online-pill"><span class="live-dot"></span><span id="online-count" class="mono">--</span></div>
+  </header>
+
+  <div class="chat-scroll" id="chat-scroll">
+    <div class="empty-state"><div class="spinner" style="margin:0 auto;"></div></div>
+  </div>
+
+  <div class="reply-preview-bar hidden" id="reply-preview-bar">
+    <div class="reply-preview-content">
+      <span class="reply-preview-label">Replying to <strong id="reply-preview-name"></strong></span>
+      <p class="reply-preview-text" id="reply-preview-text"></p>
+    </div>
+    <button class="btn-icon" id="cancel-reply-btn" aria-label="Cancel reply"></button>
+  </div>
+
+  <div class="chat-input-bar">
+    <button class="btn-icon" id="emoji-btn" aria-label="Add emoji"></button>
+    <input type="text" id="chat-input" placeholder="Say something…" maxlength="500" autocomplete="off">
+    <button class="send-btn" id="send-btn" aria-label="Send message"></button>
+  </div>
+</div>
+
+<div id="tab-bar-mount"></div>
+
+<script type="module" src="page-chat.js"></script>
+</body>
+</html>
