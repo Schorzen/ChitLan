@@ -103,10 +103,12 @@ service cloud.firestore {
         && request.resource.data.text.size() <= 500
         && request.resource.data.type in ['question', 'chismis'];
       // Anyone can bump replyCount (any reply, from anyone, increments the
-      // shared counter) — nothing else about a post can change after it's
-      // created.
+      // shared counter) and set their own reaction — nothing else about a
+      // post can change after it's created, and within reactions, only
+      // your own key may ever change (same model as chat message reactions).
       allow update: if isSignedIn()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replyCount']);
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replyCount', 'reactions'])
+        && request.resource.data.get('reactions', {}).diff(resource.data.get('reactions', {})).affectedKeys().hasOnly([request.auth.uid]);
       // The author can delete their own post any time. Anyone else can
       // only delete it once it's genuinely past expiresAt (checked against
       // Firestore's own server time) — this is what lets any active
