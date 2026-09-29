@@ -12,10 +12,12 @@ import { escapeHtml, formatClockTime, toJsDate, showToast, hidePageLoader } from
 import { CATEGORY_LABELS } from './categories.js';
 import { verifyBantayanLocation } from './geofence.js';
 import { watchUnreadPublicChat } from './unread.js';
+import { watchUnreadPrivateCount } from './pm.js';
 
 const { user, profile } = await requireVerifiedUser();
 document.getElementById('tab-bar-mount').innerHTML = renderTabBar('random', { isAdmin: profile.isAdmin });
 watchUnreadPublicChat(profile, (count) => setTabBadge('chat', count));
+watchUnreadPrivateCount(user.uid, (count) => setTabBadge('messages', count));
 document.getElementById('room-send-btn').innerHTML = icon('send', { size: 18 });
 
 startPresenceHeartbeat(user.uid);
@@ -156,6 +158,7 @@ function renderRoomShell() {
     <div class="flex-between mb-0" style="margin-bottom: var(--space-3);">
       <h3 class="mb-0" id="partner-name">Connecting…</h3>
       <div class="flex-row">
+        <button class="btn-icon" id="dm-partner-btn" aria-label="Message privately">${icon('mail', { size: 16 })}</button>
         <button class="btn-icon" id="report-partner-btn" aria-label="Report">${icon('flag', { size: 16 })}</button>
         <button class="btn-icon" id="end-chat-btn" aria-label="End chat">${icon('close', { size: 16 })}</button>
       </div>
@@ -163,6 +166,11 @@ function renderRoomShell() {
     <div class="chat-scroll" id="room-scroll"></div>`;
   document.getElementById('end-chat-btn').addEventListener('click', handleEndChat);
   document.getElementById('report-partner-btn').addEventListener('click', handleReportPartner);
+  document.getElementById('dm-partner-btn').addEventListener('click', () => {
+    if (!room.partnerUid) return;
+    const url = `dm.html?with=${encodeURIComponent(room.partnerUid)}&name=${encodeURIComponent(room.partnerName || '')}`;
+    window.location.href = url;
+  });
 }
 
 function renderRoomMessages(messages) {
