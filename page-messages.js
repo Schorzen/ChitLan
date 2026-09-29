@@ -48,4 +48,11 @@ listMyConversations(user.uid, (conversations) => {
     : `<div class="empty-state">${icon('mail', { size: 40 })}<p>No private messages yet. Start one from someone's message in Public Chat or RandomChat.</p></div>`;
 
   setTabBadge('messages', visible.filter((c) => hasUnread(c, user.uid)).length);
+}, (err) => {
+  const needsIndex = /index/i.test(err?.message || '');
+  listEl.innerHTML = `<div class="empty-state">${icon('warning', { size: 40 })}<p>${
+    needsIndex
+      ? "Messages needs a one-time database index. See README.md, step 2, then reload."
+      : "Couldn't load your messages. Check your connection, and that the updated Firestore rules are published."
+  }</p></div>`;
 });
