@@ -7,17 +7,20 @@ import { getDailyQuestion } from './daily-question.js';
 import { listTrendingTopics } from './topics.js';
 import { pushNotification, listenToNotifications, markAllRead } from './notifications.js';
 import { watchUnreadPublicChat } from './unread.js';
+import { watchUnreadPrivateCount } from './pm.js';
 import { escapeHtml, showToast, hidePageLoader } from './utils.js';
 
 const { user, profile } = await requireVerifiedUser();
 
 document.getElementById('tab-bar-mount').innerHTML = renderTabBar('home', { isAdmin: profile.isAdmin });
 watchUnreadPublicChat(profile, (count) => setTabBadge('chat', count));
+watchUnreadPrivateCount(user.uid, (count) => setTabBadge('messages', count));
 document.getElementById('bell-btn').innerHTML = icon('bell', { size: 20 });
 document.getElementById('greeting-name').textContent = profile.username || 'ChitLaner';
 
 document.getElementById('tile-chat').innerHTML = icon('chat', { size: 22 });
 document.getElementById('tile-random').innerHTML = icon('shuffle', { size: 22 });
+document.getElementById('tile-messages').innerHTML = icon('mail', { size: 22 });
 document.getElementById('tile-profile').innerHTML = icon('user', { size: 22 });
 document.getElementById('tile-question').innerHTML = icon('edit', { size: 22 });
 document.getElementById('tile-trending').innerHTML = icon('megaphone', { size: 22 });
