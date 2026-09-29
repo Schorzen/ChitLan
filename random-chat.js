@@ -7,9 +7,12 @@
 //    can't both succeed.
 // 3. If nobody's available yet, listenForMatch() watches my own queue doc —
 //    the moment someone else claims me, its status flips to 'matched'.
-// 4. Rooms are intentionally ephemeral: ChitLan has "No Private Chat" as a
-//    product decision, so ending a RandomChat deletes the room and its
-//    messages rather than keeping a saved DM history.
+// 4. Rooms are intentionally ephemeral: ending a RandomChat deletes the
+//    room and its messages rather than keeping a saved history tied to
+//    that particular random pairing. If two people want to keep talking
+//    past a RandomChat session, they can start a proper Private Message
+//    (pm.js) — a separate, dedicated feature with its own 24h-inactivity
+//    auto-delete, not a side effect of this queue/room system.
 
 import { db } from './firebase-config.js';
 import {
