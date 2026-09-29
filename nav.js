@@ -9,6 +9,7 @@ const TABS = [
   { id: 'home', href: 'home.html', label: 'Home', iconName: 'home' },
   { id: 'chat', href: 'chat.html', label: 'Chat', iconName: 'chat' },
   { id: 'random', href: 'random.html', label: 'Random', iconName: 'shuffle', fab: true },
+  { id: 'messages', href: 'messages.html', label: 'Messages', iconName: 'mail' },
   { id: 'profile', href: 'profile.html', label: 'Profile', iconName: 'user' },
 ];
 
