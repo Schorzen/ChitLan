@@ -95,6 +95,8 @@ const unsubscribe = watchConversation([user.uid, otherUid].sort().join('_'), (co
   } else {
     document.getElementById('dm-expiry-note').textContent = `Disappears ${PM_INACTIVITY_HOURS}h after the last message`;
   }
+}, () => {
+  chatScroll.innerHTML = `<div class="empty-state">${icon('warning', { size: 40 })}<p>Couldn't open this conversation. Check that the updated Firestore rules are published.</p></div>`;
 });
 
 hidePageLoader();
