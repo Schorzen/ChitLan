@@ -5,11 +5,13 @@ import { updateProfileFields } from './profile.js';
 import { getBlockedUsersDetails, unblockUserId } from './chat.js';
 import { BADGE_LABELS } from './streaks.js';
 import { watchUnreadPublicChat } from './unread.js';
+import { watchUnreadPrivateCount } from './pm.js';
 import { avatarHtml, escapeHtml, showToast, hidePageLoader } from './utils.js';
 
 const { user, profile } = await requireVerifiedUser();
 document.getElementById('tab-bar-mount').innerHTML = renderTabBar('profile', { isAdmin: profile.isAdmin });
 watchUnreadPublicChat(profile, (count) => setTabBadge('chat', count));
+watchUnreadPrivateCount(user.uid, (count) => setTabBadge('messages', count));
 document.getElementById('signout-btn').innerHTML = icon('logout', { size: 18 });
 
 function renderAvatar() {
