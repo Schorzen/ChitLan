@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6D28D9">
+<title>ChitLan — Message</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="is-loading chat-page">
+<div class="chat-page-shell">
+  <header class="page-header">
+    <div class="flex-row" style="min-width:0;">
+      <a class="btn-icon" href="messages.html" id="back-btn" aria-label="Back to Messages"></a>
+      <div style="min-width:0;">
+        <h1 style="font-size:17px;" class="mb-0" id="dm-partner-name">Message</h1>
+        <p class="text-muted mb-0" id="dm-expiry-note" style="font-size:11.5px;"></p>
+      </div>
+    </div>
+    <button class="btn-icon" id="dm-menu-btn" aria-label="More options"></button>
+  </header>
+
+  <div class="chat-scroll" id="chat-scroll">
+    <div class="empty-state"><div class="spinner" style="margin:0 auto;"></div></div>
+  </div>
+
+  <div class="chat-input-bar" id="chat-input-bar">
+    <input type="text" id="chat-input" placeholder="Message…" maxlength="500" autocomplete="off">
+    <button class="send-btn" id="send-btn" aria-label="Send message"></button>
+  </div>
+</div>
+
+<div id="tab-bar-mount"></div>
+
+<script type="module" src="page-dm.js"></script>
+</body>
+</html>
