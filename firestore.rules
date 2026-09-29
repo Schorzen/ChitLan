@@ -150,7 +150,11 @@ service cloud.firestore {
     // client-side only (pm.js / page-dm.js), consistent with how
     // `publicMessages` already handles it above.
     match /privateMessages/{convId} {
-      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+      // `resource == null` matters: opening a brand-new conversation reads a
+      // doc that doesn't exist yet, and without this the rule errors on
+      // `resource.data` and denies the read, leaving the thread stuck loading.
+      allow read: if isSignedIn()
+        && (resource == null || request.auth.uid in resource.data.participants);
 
       allow create: if isSignedIn()
         && request.resource.data.participants is list
