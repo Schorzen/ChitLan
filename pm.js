@@ -95,9 +95,12 @@ export async function sendPrivateMessage({ myUid, myInfo, otherUid, otherInfo, t
 // Live updates for one conversation thread. Fires with `null` if the
 // conversation doesn't exist yet (nobody's sent the first message) or has
 // already expired/been deleted.
-export function watchConversation(convId, onUpdate) {
+export function watchConversation(convId, onUpdate, onError) {
   return onSnapshot(doc(db, COL, convId), (snap) => {
     onUpdate(snap.exists() ? { id: snap.id, ...snap.data() } : null);
+  }, (err) => {
+    console.error('watchConversation failed:', err);
+    if (onError) onError(err);
   });
 }
 
@@ -108,7 +111,7 @@ export function watchConversation(convId, onUpdate) {
 // Needs a composite index (participants Arrays + expiresAt Descending) —
 // see README.md. Firestore will also print a direct link to create it the
 // first time this query runs without one.
-export function listMyConversations(uid, onUpdate) {
+export function listMyConversations(uid, onUpdate, onError) {
   const q = query(
     collection(db, COL),
     where('participants', 'array-contains', uid),
@@ -116,6 +119,12 @@ export function listMyConversations(uid, onUpdate) {
   );
   return onSnapshot(q, (snap) => {
     onUpdate(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+  }, (err) => {
+    // Most common causes: the composite index isn't built yet (Firestore's
+    // error message includes a link to create it), or firestore.rules
+    // hasn't been published. Both are described in README.md.
+    console.error('listMyConversations failed:', err);
+    if (onError) onError(err);
   });
 }
 
