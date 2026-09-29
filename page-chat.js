@@ -275,6 +275,7 @@ function openMessageMenu(message, isMine) {
       </div>
       <button id="reply-action">${icon('reply', { size: 18 })} Reply</button>
       ${!isMine ? `
+        <button id="dm-action">${icon('mail', { size: 18 })} Message privately</button>
         <button id="report-action">${icon('flag', { size: 18 })} Report this message</button>
         <button id="block-action" class="danger-action">${icon('block', { size: 18 })} Block this person</button>
       ` : ''}
@@ -295,6 +296,10 @@ function openMessageMenu(message, isMine) {
   });
 
   if (!isMine) {
+    backdrop.querySelector('#dm-action').addEventListener('click', () => {
+      const url = `dm.html?with=${encodeURIComponent(message.senderId)}&name=${encodeURIComponent(message.senderName)}&photo=${encodeURIComponent(message.senderPhoto || '')}`;
+      window.location.href = url;
+    });
     backdrop.querySelector('#report-action').addEventListener('click', async () => {
       await reportMessage({ message, reportedBy: user.uid, reason: 'inappropriate' });
       showToast('Reported. Thanks for flagging it.');
