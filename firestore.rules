@@ -133,6 +133,60 @@ service cloud.firestore {
       }
     }
 
+    // ---- Private Messages ----
+    // A whole 1:1 conversation (both participants + every message) lives
+    // in ONE doc here, not a subcollection — see the comment at the top
+    // of pm.js for why that matters for the 24h auto-delete to actually
+    // erase everything, not just the parent doc.
+    //
+    // Documented trade-off, same spirit as the ones above: once both
+    // participants can write this doc, either one can technically rewrite
+    // or delete the OTHER's past messages within their own shared
+    // conversation — these rules tightly validate the newly appended
+    // message, not the full history array. Given only the two
+    // participants ever see this data, that's the same level of trust any
+    // real messaging app already places in a "delete for me" action, not
+    // a hole that exposes anything to a third party. Blocking is enforced
+    // client-side only (pm.js / page-dm.js), consistent with how
+    // `publicMessages` already handles it above.
+    match /privateMessages/{convId} {
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+
+      allow create: if isSignedIn()
+        && request.resource.data.participants is list
+        && request.resource.data.participants.size() == 2
+        && request.auth.uid in request.resource.data.participants
+        && request.resource.data.messages.size() == 1
+        && request.resource.data.messages[0].senderId == request.auth.uid
+        && request.resource.data.messages[0].text is string
+        && request.resource.data.messages[0].text.size() > 0
+        && request.resource.data.messages[0].text.size() <= 500;
+
+      allow update: if isSignedIn()
+        && request.auth.uid in resource.data.participants
+        && request.resource.data.participants == resource.data.participants
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['messages', 'expiresAt', 'lastSeenBy'])
+        && request.resource.data.lastSeenBy.diff(resource.data.get('lastSeenBy', {})).affectedKeys().hasOnly([request.auth.uid])
+        && (
+          // marking seen (messages/expiresAt untouched) ...
+          request.resource.data.messages == resource.data.messages
+          // ...or exactly one new message appended, authored by you
+          || (
+            request.resource.data.messages.size() == resource.data.messages.size() + 1
+            && request.resource.data.messages[resource.data.messages.size()].senderId == request.auth.uid
+            && request.resource.data.messages[resource.data.messages.size()].text is string
+            && request.resource.data.messages[resource.data.messages.size()].text.size() > 0
+            && request.resource.data.messages[resource.data.messages.size()].text.size() <= 500
+          )
+        );
+
+      // Native Firestore TTL deletions (see README.md) are carried out by
+      // Firestore's own backend service and are NOT subject to security
+      // rules at all — this `delete` rule only governs the app's optional
+      // "Delete conversation" button, not the automatic 24h expiry.
+      allow delete: if isSignedIn() && request.auth.uid in resource.data.participants;
+    }
+
     // ---- Reports ----
     match /reports/{reportId} {
       allow create: if isSignedIn() && request.resource.data.reportedBy == request.auth.uid;
